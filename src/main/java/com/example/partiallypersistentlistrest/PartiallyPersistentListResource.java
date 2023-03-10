@@ -9,7 +9,11 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.json.JSONObject;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import java.util.List;
 
 /**
@@ -24,14 +28,25 @@ public class PartiallyPersistentListResource {
      * @return Response with status 404 - Version ID is invalid!
      * */
     private Response getInvalidVersionResponse() {
-        return Response.status(404, "Version ID is invalid!").build();
+        return Response.status(Response.Status.NOT_FOUND.getStatusCode(),
+                "Version ID is invalid!").build();
     }
 
     /**
      * @return Response with status 404 - Data list index is invalid!!
      * */
     private Response getInvalidIndexResponse() {
-        return Response.status(404, "Data list index is invalid!").build();
+        return Response.status(Response.Status.NOT_FOUND.getStatusCode(),
+                "Data list index is invalid!").build();
+    }
+
+    /**
+     * @param version list version that will be returned with Response
+     * @return OK Response with status 200 and {"listVersion":version} as body
+     * */
+    private Response getListVersionResponse(int version) {
+        JSONObject listVersion = new JSONObject().put("listVersion", version);
+        return Response.ok(listVersion.toString(), MediaType.APPLICATION_JSON).build();
     }
 
     @GET
@@ -76,14 +91,13 @@ public class PartiallyPersistentListResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/list/{id}")
     public Response pushBack(@PathParam("id") int version, AddElementRequestData data) {
-        if (data == null) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("AddElementRequestData is null").build();
+        if (data == null || data.getNewElement() == null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("AddElementRequestData is invalid!").build();
         }
         data.setVersion(version);
         Response response;
         try {
-            String result = String.format("{\"listVersion\":%d}\n", cache.addElement(data));
-            response = Response.ok().entity(result).build();
+            response = getListVersionResponse(cache.addElement(data));
         } catch (InvalidVersionException e) {
             response = getInvalidVersionResponse();
         }
@@ -95,23 +109,22 @@ public class PartiallyPersistentListResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/list/{id}")
     public Response updateElement(@PathParam("id") int version, UpdateElementRequestData data) {
-        if (data == null) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("UpdateElementRequestData is null").build();
+        if (data == null || data.getNewElement() == null || data.getOldElement() == null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("UpdateElementRequestData is invalid!").build();
         }
         data.setVersion(version);
         Response response;
         try {
             boolean elementInList = cache.contains(version, data.getNewElement());
             if (!elementInList) {
-                response = Response.status(404, "No such element in the list").build();
+                response = Response.status(Response.Status.NOT_FOUND.getStatusCode(), "No such element in the list").build();
             } else {
-                String result = String.format("{\"listVersion\":%d}\n", cache.updateElement(data));
-                response = Response.ok().entity(result).build();
+                response = getListVersionResponse(cache.updateElement(data));
             }
         } catch (InvalidVersionException e) {
             response = getInvalidVersionResponse();
         } catch (ElementDoesNotExistException e) {
-            response = Response.status(404, e.getMessage()).build();
+            response = Response.status(Response.Status.NOT_FOUND.getStatusCode(), e.getMessage()).build();
         }
         return response;
     }
@@ -123,8 +136,7 @@ public class PartiallyPersistentListResource {
     public Response deleteElement(@PathParam("id") final int version, @PathParam("index") final int index) {
         Response response;
         try {
-            String result = String.format("{\"listVersion\":%d}\n", cache.deleteElementByIndex(version, index));
-            response = Response.ok().entity(result).build();
+            response = getListVersionResponse(cache.deleteElementByIndex(version, index));
         } catch (InvalidVersionException e) {
             response = getInvalidVersionResponse();
         } catch (IndexOutOfBoundsException e) {
@@ -138,18 +150,17 @@ public class PartiallyPersistentListResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/list/{id}")
     public Response deleteElement(@PathParam("id") int version, DeleteElementRequestData data) {
-        if (data == null) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("DeleteElementRequestData is null").build();
+        if (data == null || data.getOldElement() == null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("DeleteElementRequestData is invalid!").build();
         }
         data.setVersion(version);
         Response response;
         try {
-            String result = String.format("{\"listVersion\":%d}\n", cache.deleteElementByValue(data));
-            response = Response.ok().entity(result).build();
+            response = getListVersionResponse(cache.deleteElementByValue(data));
         } catch (InvalidVersionException e) {
             response = getInvalidVersionResponse();
         } catch (ElementDoesNotExistException e) {
-            response = Response.status(404, e.getMessage()).build();
+            response = Response.status(Response.Status.NOT_FOUND.getStatusCode(), e.getMessage()).build();
         }
         return response;
     }

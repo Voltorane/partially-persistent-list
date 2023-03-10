@@ -19,7 +19,7 @@ public class AddElementRequestData {
         return version;
     }
 
-    public int getNewElement() {
+    public Integer getNewElement() {
         return newElement;
     }
 }

@@ -2,14 +2,19 @@ package com.example.partiallypersistentlistrest;
 
 import com.example.partiallypersistentlistrest.exceptions.ElementDoesNotExistException;
 import com.example.partiallypersistentlistrest.exceptions.InvalidVersionException;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PartiallyPersistentList {
+    /**
+     * Class to represent a single version of a partially persistent list
+     * */
     public static class Version {
         private final int id;
-        private final List<Integer> data;
+        @JsonIgnore private final List<Integer> data;
 
         public Version(List<Integer> dataList, int versionId) {
             data = new ArrayList<>(dataList);
@@ -20,6 +25,7 @@ public class PartiallyPersistentList {
             return id;
         }
 
+        @JsonIgnore
         public List<Integer> getData() {
             return data;
         }
@@ -30,8 +36,7 @@ public class PartiallyPersistentList {
         }
     }
 
-    public int versionId = 0;
-
+    public int versionId = 0; // last version id, will be used to generate following id's of versions
     private final List<Version> versions;
     private List<Integer> currentData;
 
@@ -39,6 +44,14 @@ public class PartiallyPersistentList {
         versions = new ArrayList<>();
         currentData = new ArrayList<>();
         versions.add(new Version(currentData, ++versionId));
+    }
+
+    /**
+     * Retrieves versions of this PartiallyPersistentList
+     * @return list of versions of this list
+     */
+    public List<Version> getVersions() {
+        return versions;
     }
 
     /**
@@ -80,14 +93,6 @@ public class PartiallyPersistentList {
         Version v = new Version(currentData, ++versionId);
         versions.add(v);
         return v.id;
-    }
-
-    /**
-     * Retrieves versions of this PartiallyPersistentList
-     * @return list of versions of this list
-     */
-    public List<Version> getVersions() {
-        return versions;
     }
 
     /**

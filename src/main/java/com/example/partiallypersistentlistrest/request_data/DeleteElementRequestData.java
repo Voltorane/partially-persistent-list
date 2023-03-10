@@ -19,7 +19,7 @@ public class DeleteElementRequestData {
         return version;
     }
 
-    public int getOldElement() {
+    public Integer getOldElement() {
         return oldElement;
     }
 }

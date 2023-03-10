@@ -20,7 +20,7 @@ public class UpdateElementRequestData {
         this.newElement = newElement;
     }
 
-    public int getNewElement() {
+    public Integer getNewElement() {
         return newElement;
     }
 
