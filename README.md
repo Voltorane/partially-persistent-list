@@ -6,7 +6,7 @@ The following implementation is represents an approach of **Partially Persistent
 [`Partially Persistent List`]( https://github.com/Voltorane/partially-persistent-list-rest/blob/main/src/main/java/com/example/partiallypersistentlistrest/PartiallyPersistentList.java) was introduced as a plain Java API, being able to store Integers in and versions of itself. An instance of it would be then saved in the [`Partially Pesistent List Cache`](https://github.com/Voltorane/partially-persistent-list-rest/blob/main/src/main/java/com/example/partiallypersistentlistrest/PartiallyPersistentListCache.java), which would represent a controller between a Resource entry-point and PPL. [`Partially Persistent List Resource`](https://github.com/Voltorane/partially-persistent-list-rest/blob/main/src/main/java/com/example/partiallypersistentlistrest/PartiallyPersistentListResource.java) is an actual REST API resource that handles HTTP requests and generates appropriate response. The Cache is injected into the Resource as per Context and Dependency Injection.
 
 ## Specification
-As the web service represents the functionality only of Partially Persistent List, it's API was wrapped around with REST requests. It supports the following Requests: \
+As the web service represents the functionality only of Partially Persistent List, it's API was wrapped around with REST requests. It supports the following Requests:
 
 1) Get the available versions  
 Request: *GET /lists*  
@@ -28,7 +28,7 @@ Codes: \
 4) Add a new element to the end of the list  
 Request: *POST /list/{id}*   
 Request body: *{ "newElement": <int\> }*  
-Response: *{ "listVersion": <int\> }*
+Response: *{ "listVersion": <int\> }* \
 Codes: \
 400 - Request body is invalid \
 404 - Invalid version provided
@@ -36,7 +36,7 @@ Codes: \
 5) Update an element’s value  
 Request: *PUT /list/{id}*  
 Request body: *{ "oldValue": <int\>, "newValue": <int\> }*  
-Response: *{ "listVersion": <int\> }*
+Response: *{ "listVersion": <int\> }* \
 Codes: \
 400 - Request body is invalid \
 404 - Invalid version provided \
@@ -46,7 +46,7 @@ Codes: \
 Request: *DELETE /list/{id}*  
 Request body: *{ "oldElement": <int\> }*  
 Response: *{ "listVersion": <int\> }* \
-**Attention, might not work wiht some Application servers!** \
+**Attention, might not work with some Application servers!** \
 Codes: \
 400 - Either application server just doesn't support DELETE requests with body **OR** request body is invalid (check by the response body message) \
 404 - Invalid version provided \
