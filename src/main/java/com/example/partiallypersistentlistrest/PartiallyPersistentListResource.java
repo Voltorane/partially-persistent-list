@@ -126,9 +126,10 @@ public class PartiallyPersistentListResource {
         }
         Response response;
         try {
-            boolean elementInList = cache.contains(version, data.getNewElement());
+            boolean elementInList = cache.contains(version, data.getOldElement());
             if (!elementInList) {
-                response = Response.status(Response.Status.NOT_ACCEPTABLE.getStatusCode(), "No such element in the list").build();
+                response = Response.status(Response.Status.NOT_ACCEPTABLE.getStatusCode(),
+                        "No such element in the list").build();
             } else {
                 response = getListVersionResponse(cache.updateElement(data));
             }
