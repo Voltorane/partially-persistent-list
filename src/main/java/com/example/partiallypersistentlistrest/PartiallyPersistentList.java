@@ -2,8 +2,6 @@ package com.example.partiallypersistentlistrest;
 
 import com.example.partiallypersistentlistrest.exceptions.ElementDoesNotExistException;
 import com.example.partiallypersistentlistrest.exceptions.InvalidVersionException;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +12,7 @@ public class PartiallyPersistentList {
      * */
     public static class Version {
         private final int id;
-        @JsonIgnore private final List<Integer> data;
+        private final List<Integer> data;
 
         public Version(List<Integer> dataList, int versionId) {
             data = new ArrayList<>(dataList);
@@ -25,7 +23,6 @@ public class PartiallyPersistentList {
             return id;
         }
 
-        @JsonIgnore
         public List<Integer> getData() {
             return data;
         }
