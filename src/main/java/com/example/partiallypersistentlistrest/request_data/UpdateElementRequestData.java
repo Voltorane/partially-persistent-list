@@ -1,6 +1,6 @@
 package com.example.partiallypersistentlistrest.request_data;
 
-public class UpdateElementRequestData {
+public class UpdateElementRequestData extends RequestData {
     private Integer oldElement;
     private Integer newElement;
     private Integer version;
@@ -30,5 +30,10 @@ public class UpdateElementRequestData {
 
     public void setOldElement(Integer oldElement) {
         this.oldElement = oldElement;
+    }
+
+    @Override
+    public boolean isValid() {
+        return oldElement != null && newElement != null && version != null;
     }
 }

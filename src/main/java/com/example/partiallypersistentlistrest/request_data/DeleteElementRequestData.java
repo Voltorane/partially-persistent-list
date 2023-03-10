@@ -1,6 +1,6 @@
 package com.example.partiallypersistentlistrest.request_data;
 
-public class DeleteElementRequestData {
+public class DeleteElementRequestData extends RequestData{
     private Integer oldElement;
     private Integer version;
 
@@ -21,5 +21,10 @@ public class DeleteElementRequestData {
 
     public Integer getOldElement() {
         return oldElement;
+    }
+
+    @Override
+    public boolean isValid() {
+        return oldElement != null && version != null;
     }
 }
