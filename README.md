@@ -62,3 +62,4 @@ Codes: \
 
 ## Deployment
 For this web service the *Jakarta EE* was used as REST API framework for Java and *GlassFish 7.0.2* in order to deploy the application server.
+
